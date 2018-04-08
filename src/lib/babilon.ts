@@ -6,9 +6,9 @@ export type TExp = any[];
 
 export interface IStep {
   exp: TExp;
-  exps?: TExp[];
-  memory?: any;
+  args?: any[];
   index?: number;
+  validateMemory?: any;
   hasErrors?: true;
 }
 
@@ -38,7 +38,8 @@ export interface IFlow {
   resolver?: IResolver;
   errors?: IError[];
   result?: any;
-  memory?: any;
+  resolveMemory?: any;
+  validateMemory?: any;
 }
 
 export interface IBabilon {
@@ -50,10 +51,10 @@ export const router = (flow) => {
 
 export const validate = (last: IStep, flow: IFlow) => {
   if (!_.isArray(last.exp) || !_.isString(last.exp[0])) {
-    error('validate', 'invalid', flow);
+    error('validate', 'is not expression', flow);
   } else {
     if (!flow.validators[last.exp[0]]) {
-      error('validate', `unexpected exp: ${last.exp[0]}.`, flow);
+      error('validate', `unexpected exp ${last.exp[0]}`, flow);
     } else {
       flow.validators[last.exp[0]](last, flow);
     }
@@ -75,7 +76,7 @@ export const back = (last, flow) => {
 };
 
 export const babilon: IBabilon = (flow) => {
-  flow.path = [{ exp: flow.exp }];
+  flow.path = [{ exp: flow.exp, args: [] }];
   flow.validate = flow.validate || validate;
   flow.validators = flow.validators || validators;
   flow.errors = [];
@@ -87,18 +88,20 @@ export const babilon: IBabilon = (flow) => {
 
     if (_.isNumber(last.index)) {
       last.index++;
-      if (last.exps.length > last.index) {
-        flow.path.push({ exp: last.exps[last.index] });
+      if (last.args.length > last.index) {
+        if (last.args[last.index]) {
+          flow.path.push({ exp: last.args[last.index], args: [] });
+        }
       } else {
         if (flow.resolver) flow.resolver(last, flow);
         back(last, flow);
       }
     } else {
       flow.validate(last, flow);
-      if (last.errors) {
+      if (last.hasErrors) {
         back(last, flow);
       } else {
-        if (last.exps && last.exps.length) {
+        if (last.args && last.args.length) {
           last.index = -1;
         } else {
           if (flow.resolver) flow.resolver(last, flow);

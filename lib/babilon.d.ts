@@ -1,9 +1,9 @@
 export declare type TExp = any[];
 export interface IStep {
     exp: TExp;
-    exps?: TExp[];
-    memory?: any;
+    args?: any[];
     index?: number;
+    validateMemory?: any;
     hasErrors?: true;
 }
 export interface IValidator {
@@ -28,7 +28,8 @@ export interface IFlow {
     resolver?: IResolver;
     errors?: IError[];
     result?: any;
-    memory?: any;
+    resolveMemory?: any;
+    validateMemory?: any;
 }
 export interface IBabilon {
     (flow: IFlow): IFlow;

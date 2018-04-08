@@ -2,151 +2,149 @@ import * as _ from 'lodash';
 
 import { error } from './babilon';
 
-export interface IAllowedExpressions {
-  [name: string]: {
-    unique?: boolean;
-    all?: string[];
-    [index: number]: string[];
+export interface IRules {
+  types: { [name: string]: string[] };
+  expressions: {
+    [name: string]: {
+      args?: string[];
+      all?: string[];
+      unique?: boolean;
+      validate?: (last, flow) => any;
+    };
   };
 }
 
-export const logics = ['and', 'or'];
-export const checks = ['=', '!=', '>', '>=', '<', '<='];
-export const operators = ['+', '-', '*', '/', ':'];
-export const getters = ['data', 'path', ...logics, ...checks, ...operators];
-export const allowedExpressions = {
-  as: {
-    1: getters,
+export const rules: IRules = {
+  types: {
+    data: ['undefined','string','number','boolean','object','array'],
+    get: ['!data','!path',':logic',':check',':operator'],
+    logic: ['!and','!or'],
+    check: ['!eq','!not','!gt','!gte','!lt','!lte'],
+    operator: ['!add','!plus','!minus','!multiply','!divide'],
   },
-  check: {
-    1: getters,
-    2: getters,
-  },
-  operator: {
-    1: getters,
-    2: getters,
-  },
-  and: {
-    all: getters,
-  },
-  or: {
-    all: getters,
-  },
-  order: {
-    1: ['path'],
-  },
-  group: {
-    1: ['path'],
-  },
-  returns: {
-    all: ['path', 'as'],
-  },
-  from: {
-    all: ['alias'],
-  },
-  orders: {
-    all: ['order'],
-  },
-  groups: {
-    all: ['group'],
-  },
-  select: {
-    unique: true,
-    all: ['returns', 'from', 'and', 'orders', 'groups', 'limit', 'skip'],
+  expressions: {
+    data: { args: [':data'] },
+    path: { args: ['string'], all: ['string'] },
+    alias: { args: ['string', '?string'] },
+    as: { args: [':get','?string'] },
+
+    and: { all: [':get'] },
+    or: { all: [':get'] },
+
+    eq: { args: [':get',':get'] },
+    not: { args: [':get',':get'] },
+    gt: { args: [':get',':get'] },
+    gte: { args: [':get',':get'] },
+    lt: { args: [':get',':get'] },
+    lte: { args: [':get',':get'] },
+
+    add: { args: [':get',':get'] },
+    plus: { args: [':get',':get'] },
+    minus: { args: [':get',':get'] },
+    multiply: { args: [':get',':get'] },
+    divide: { args: [':get',':get'] },
+    
+    order: { args: ['!path','?boolean'] },
+    orders: { all: ['!order'] },
+    
+    group: { args: ['!path'] },
+    groups: { all: ['!group'] },
+
+    limit: { args: ['number'] },
+    skip: { args: ['number'] },
+
+    returns: { all: ['!as','!path'] },
+    from: { all: ['!alias'] },
+
+    select: {
+      unique: true,
+      all: ['!returns','!from','!and','!orders','!groups','!limit','!skip'], 
+      validate(last, flow) {
+        if (!last.validateMemory.expressions.from) {
+          error(last.exp[0], `select required expression from`, flow);
+        }
+      },
+    },
   },
 };
 
-export const newValidators = (allowedExpressions: IAllowedExpressions) => {
-  const check = (last, flow) => {
-    if (last.exp.length !== 3) return error(last.exp[0], `length !== 3`, flow);
-    if (!_.isArray(last.exp[1])) return error(last.exp[0], `[1] is not exp`, flow);
-    if (!_.includes(allowedExpressions['check'][1], last.exp[1][0])) return error(last.exp[0], `[1] is not allowed exp`, flow);
-    if (!_.isArray(last.exp[2])) return error(last.exp[0], `[2] is not exp`, flow);
-    if (!_.includes(allowedExpressions['check'][2], last.exp[2][0])) return error(last.exp[0], `[2] is not allowed exp`, flow);
-    last.exps = [last.exp[1], last.exp[2]];
-  };
-  
-  const operator = (last, flow) => {
-    if (last.exp.length !== 3) return error(last.exp[0], `length !== 3`, flow);
-    if (!_.isArray(last.exp[1])) return error(last.exp[0], `[1] is not exp`, flow);
-    if (!_.includes(allowedExpressions['operator'][1], last.exp[1][0])) return error(last.exp[0], `[1] is not allowed exp`, flow);
-    if (!_.isArray(last.exp[2])) return error(last.exp[0], `[2] is not exp`, flow);
-    if (!_.includes(allowedExpressions['operator'][2], last.exp[2][0])) return error(last.exp[0], `[2] is not allowed exp`, flow);
-    last.exps = [last.exp[1], last.exp[2]];
-  };
-  
-  const numeric = (last, flow) => {
-    if (last.exp.length !== 2) return error(last.exp[0], `length !== 2`, flow);
-    if (!_.isNumber(last.exp[1])) return error(last.exp[0], `[1] is not number`, flow);
-  };
-  
-  const exps = (last, flow) => {
-    const allow = allowedExpressions[last.exp[0]];
-    const uniques = {};
-    _.times(last.exp.length - 1, (l) => {
-      if (allow.unique) {
-        if (uniques[last.exp[l + 1][0]]) return error(last.exp[0], `[${l + 1}] not unique ${last.exp[l + 1][0]}`, flow);
-        uniques[last.exp[l + 1][0]] = 1;
+// ?(!:)name
+
+export const isType = (last, rules, exp, arg, i) => {
+  if (arg[0] === ':') {
+    if (isTypes(last, rules, rules.types[_.trimStart(arg, ':')], exp, i)) {
+      return true;
+    }
+  } else if (arg[0] === '!') {
+    if (_.isArray(exp) && exp[0] === _.trimStart(arg, '!')) {
+      last.args[i] = exp;
+      last.validateMemory.expressions[exp[0]] = true;
+      return true;
+    }
+  } else if (_.includes(['undefined','string','number','boolean','object','array'], arg)) {
+    if (_[`is${_.capitalize(arg)}`](exp)) {
+      last.args[i] = undefined;
+      return true;
+    }
+  }
+};
+
+export const isTypes = (last, rules, types, exp, i) => {
+  let t;
+  for (t = 0; t < types.length; t++) {
+    if (isType(last, rules, exp, types[t], i)) return true;
+  }
+  return false;
+};
+
+export const isArg = (last, rules, arg, exp, i) => {
+  const _arg = _.trimStart(arg, '?');
+  if (isType(last, rules, exp, _arg, i)) return true;
+  return false;
+};
+
+export const createValidators = (rules: IRules) => {
+  const validators = {};
+  _.each(rules.expressions, (rule, name) => {
+    validators[name] = (last, flow) => {
+      flow.validateMemory = flow.validateMemory || { sources: [] };
+      last.validateMemory = last.validateMemory || { expressions: {} };
+
+      if (rule.args) {
+        let a;
+        for (a = 0; a < rule.args.length; a++) {
+          if (last.exp.length < a + 2) {
+            if (rule.args[a][0] !== '?') {
+              return error(last.exp[0], `arg [${a}] ${rule.args[a]} is not defined`, flow);
+            }
+          } else {
+            if (!isArg(last, rules, rule.args[a], last.exp[a + 1], a)) {
+              return error(last.exp[0], `arg [${a}] is not ${rule.args[a]}`, flow);
+            }
+          }
+        }
       }
-
-      if (!_.isArray(last.exp[l + 1])) return error(last.exp[0], `[${l + 1}] is not exp`, flow);
-      if (!_.includes(allow.all, last.exp[l + 1][0]) && !_.includes(allow[l + 1], last.exp[l + 1][0])) return error(last.exp[0], `[${l + 1}] is not allowed exp`, flow);
-      last.exps = last.exp.slice(1);
-    });
-  };
-
-  const validators = {
-    data(last, flow) {
-      if (last.exp.length !== 2) return error(last.exp[0], `length !== 2`, flow);
-    },
-    path(last, flow) {
-      if (last.exp.length < 2) return error(last.exp[0], `length < 2`, flow);
-      _.times(last.exp.length - 1, (l) => {
-        if (!_.isString(last.exp[l + 1])) error(last.exp[0], `[${l + 1}] is not string`, flow);
-      });
-    },
-    alias(last, flow) {
-      if (last.exp.length < 2 || last.exp.length > 3) return error(last.exp[0], `length not in 2...3`, flow);
-      _.times(last.exp.length - 1, (l) => {
-        if (!_.isString(last.exp[l + 1])) error(last.exp[0], `[${l + 1}] is not string`, flow);
-      });
-    },
-    as(last, flow) {
-      if (last.exp.length !== 3) return error(last.exp[0], `length !== 3`, flow);
-      if (!_.isArray(last.exp[1])) return error(last.exp[0], `[1] is not exp`, flow);
-      if (!_.includes(allowedExpressions[last.exp[0]][1], last.exp[1][0])) return error(last.exp[0], `[1] is not allowed exp`, flow);
-      if (!_.isString(last.exp[2])) return error(last.exp[0], `[2] is not string`, flow);
-      last.exps = [last.exp[1]];
-    },
-    order(last, flow) {
-      if (last.exp.length < 2 || last.exp.length > 3) return error(last.exp[0], `length not in 2...3`, flow);
-      if (!_.isArray(last.exp[1])) return error(last.exp[0], `[1] is not exp`, flow);
-      if (!_.includes(allowedExpressions[last.exp[0]][1], last.exp[1][0])) return error(last.exp[0], `[1] is not allowed exp`, flow);
-      if (last.exp.length === 3) {
-        if (!_.isBoolean(last.exp[2])) return error(last.exp[0], `[2] is not boolean`, flow);
+      if (rule.all) {
+        let e;
+        const repeats = {};
+        for (e = 1; e < last.exp.length; e++) {
+          if (!isTypes(last, rules, rule.all, last.exp[e], e - 1)) {
+            return error(last.exp[0], `arg [${e - 1}] is not any of all [${rule.all}]`, flow);
+          }
+          if (_.isArray(last.exp[e])) {
+            repeats[last.exp[e][0]] = repeats[last.exp[e][0]] || 0;
+            repeats[last.exp[e][0]]++;
+            if (repeats[last.exp[e][0]] > 1 && rule.unique) {
+              return error(last.exp[0], `arg [${e - 1}] has duplicates of ${last.exp[e][0]}`, flow);
+            }
+          }
+        }
       }
-      last.exps = [last.exp[1]];
-    },
-    group(last, flow) {
-      if (last.exp.length !== 2) return error(last.exp[0], `length !== 2`, flow);
-      if (!_.isArray(last.exp[1])) return error(last.exp[0], `[1] is not exp`, flow);
-      if (!_.includes(allowedExpressions[last.exp[0]][1], last.exp[1][0])) return error(last.exp[0], `[1] is not allowed exp`, flow);
-      last.exps = [last.exp[1]];
-    },
-    limit: numeric,
-    skip: numeric,
-    returns: exps,
-    from: exps,
-    orders: exps,
-    groups: exps,
-    select: exps,
-  };
-
-  _.each(logics, name => validators[name] = exps);
-  _.each(operators, name => validators[name] = operator);
-  _.each(checks, name => validators[name] = check);
+      if (rule.validate) rule.validate(last, flow);
+    };
+  });
 
   return validators;
 };
 
-export const validators = newValidators(allowedExpressions);
+export const validators = createValidators(rules);

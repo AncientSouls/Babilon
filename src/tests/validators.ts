@@ -17,43 +17,42 @@ export default () => {
       babi(['data', 'abc'], []);
       babi(['data', [1,2,3]], []);
       babi(['data', { a: 1, b: 2, c: 3 }], []);
-      babi(['data'], [{ path: [], emitter: 'data', message: 'length !== 2' }]);
+      babi(['data'], [{ path: [], emitter: 'data', message: 'arg [0] :data is not defined' }]);
     });
     it('path', () => {
       babi(['path', 'a'], []);
       babi(['path', 'a', 'b'], []);
       babi(['path', 'a', 'b', 'c'], []);
-      babi(['path'], [{ path: [], emitter: 'path', message: 'length < 2' }]);
-      babi(['path', 123], [{ path: [], emitter: 'path', message: '[1] is not string' }]);
-      babi(['path', {}], [{ path: [], emitter: 'path', message: '[1] is not string' }]);
+      babi(['path'], [{ path: [], emitter: 'path', message: 'arg [0] string is not defined' }]);
+      babi(['path', 123], [{ path: [], emitter: 'path', message: 'arg [0] is not string' }]);
+      babi(['path', {}], [{ path: [], emitter: 'path', message: 'arg [0] is not string' }]);
     });
     it('alias', () => {
       babi(['alias', 'a'], []);
       babi(['alias', 'a', 'b'], []);
-      babi(['alias', 'a', 'b', 'c'], [{ path: [], emitter: 'alias', message: 'length not in 2...3' }]);
-      babi(['alias', 123], [{ path: [], emitter: 'alias', message: '[1] is not string' }]);
-      babi(['alias'], [{ path: [], emitter: 'alias', message: 'length not in 2...3' }]);
+      babi(['alias', 123], [{ path: [], emitter: 'alias', message: 'arg [0] is not string' }]);
+      babi(['alias'], [{ path: [], emitter: 'alias', message: 'arg [0] string is not defined' }]);
     });
     it('as', () => {
       babi(['as', ['data', 123], 'x'], []);
-      babi(['as'], [{ path: [], emitter: 'as', message: 'length !== 3' }]);
-      babi(['as', 123, 'x'], [{ path: [], emitter: 'as', message: '[1] is not exp' }]);
-      babi(['as', ['data', 123], 123], [{ path: [], emitter: 'as', message: '[2] is not string' }]);
+      babi(['as'], [{ path: [], emitter: 'as', message: 'arg [0] :get is not defined' }]);
+      babi(['as', 123, 'x'], [{ path: [], emitter: 'as', message: 'arg [0] is not :get' }]);
+      babi(['as', ['data', 123], 123], [{ path: [], emitter: 'as', message: 'arg [1] is not ?string' }]);
     });
     it('check', () => {
-      babi(['=', ['data', 123], ['data', 123]], []);
-      babi(['!=', ['data', 123], ['data', 123]], []);
-      babi(['>', ['data', 123], ['data', 123]], []);
-      babi(['>=', ['data', 123], ['data', 123]], []);
-      babi(['<', ['data', 123], ['data', 123]], []);
-      babi(['<=', ['data', 123], ['data', 123]], []);
+      babi(['eq', ['data', 123], ['data', 123]], []);
+      babi(['not', ['data', 123], ['data', 123]], []);
+      babi(['gt', ['data', 123], ['data', 123]], []);
+      babi(['gte', ['data', 123], ['data', 123]], []);
+      babi(['lt', ['data', 123], ['data', 123]], []);
+      babi(['lte', ['data', 123], ['data', 123]], []);
     });
     it('operators', () => {
-      babi(['+', ['data', 123], ['data', 123]], []);
-      babi(['-', ['data', 123], ['data', 123]], []);
-      babi(['*', ['data', 123], ['data', 123]], []);
-      babi(['/', ['data', 123], ['data', 123]], []);
-      babi([':', ['data', 123], ['data', 123]], []);
+      babi(['add', ['data', 123], ['data', 123]], []);
+      babi(['plus', ['data', 123], ['data', 123]], []);
+      babi(['minus', ['data', 123], ['data', 123]], []);
+      babi(['multiply', ['data', 123], ['data', 123]], []);
+      babi(['divide', ['data', 123], ['data', 123]], []);
     });
     it('logic', () => {
       babi(['and', ['data', 123], ['data', 123]], []);
@@ -98,7 +97,20 @@ export default () => {
         [
           {
             emitter: 'select',
-            message: '[2] not unique returns',
+            message: 'arg [1] has duplicates of returns',
+            path: [],
+          },
+        ],
+      );
+      babi(
+        [
+          'select',
+          ['returns', ['path', 'a'], ['as', ['data', 123], 'x']],
+        ],
+        [
+          {
+            emitter: 'select',
+            message: 'select required expression from',
             path: [],
           },
         ],

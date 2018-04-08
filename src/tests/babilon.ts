@@ -9,12 +9,12 @@ export default () => {
     it('validation errors', () => {
       assert.deepEqual(
         babilon({
-          exp: ['as', ['and', ['=', ['path', 'a'], ['path', 'b']], ['!=', ['path'], ['path', 'a']]], 'x'],
+          exp: ['as', ['and', ['eq', ['path', 'a'], ['path', 'b']], ['not', ['path'], ['path', 'a']]], 'x'],
         }).errors,
         [
           {
             emitter: 'path',
-            message: 'length < 2',
+            message: 'arg [0] string is not defined',
             path: [0,1,0],
           },
         ],
