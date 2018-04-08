@@ -7,7 +7,7 @@ export interface IRules {
             args?: string[];
             all?: string[];
             unique?: boolean;
-            validate?: (last, flow) => any;
+            handle?: (last, flow) => any;
         };
     };
 }

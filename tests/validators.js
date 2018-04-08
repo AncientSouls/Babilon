@@ -3,7 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const babilon_1 = require("../lib/babilon");
 const babi = (exp, errors) => {
-    chai_1.assert.deepEqual(babilon_1.babilon({ exp }).errors, errors);
+    const b = babilon_1.babilon({ exp });
+    chai_1.assert.deepEqual(b.errors, errors);
+    return b;
 };
 exports.default = () => {
     describe('validators', () => {
@@ -36,6 +38,10 @@ exports.default = () => {
             babi(['as', 123, 'x'], [{ path: [], emitter: 'as', message: 'arg [0] is not :get' }]);
             babi(['as', ['data', 123], 123], [{ path: [], emitter: 'as', message: 'arg [1] is not ?string' }]);
         });
+        it('logic', () => {
+            babi(['and', ['data', 123], ['data', 123]], []);
+            babi(['or', ['data', 123], ['data', 123]], []);
+        });
         it('check', () => {
             babi(['eq', ['data', 123], ['data', 123]], []);
             babi(['not', ['data', 123], ['data', 123]], []);
@@ -51,17 +57,15 @@ exports.default = () => {
             babi(['multiply', ['data', 123], ['data', 123]], []);
             babi(['divide', ['data', 123], ['data', 123]], []);
         });
-        it('logic', () => {
-            babi(['and', ['data', 123], ['data', 123]], []);
-            babi(['or', ['data', 123], ['data', 123]], []);
-        });
-        it('order', () => {
+        it('order orders', () => {
             babi(['order', ['path', 'a']], []);
             babi(['order', ['path', 'a'], true], []);
             babi(['order', ['path', 'a'], false], []);
+            babi(['orders', ['order', ['path', 'a']], ['order', ['path', 'a']]], []);
         });
-        it('group', () => {
+        it('group groups', () => {
             babi(['group', ['path', 'a']], []);
+            babi(['groups', ['group', ['path', 'a']], ['group', ['path', 'a']]], []);
         });
         it('limit skip', () => {
             babi(['limit', 7], []);
@@ -103,6 +107,22 @@ exports.default = () => {
                     path: [],
                 },
             ]);
+        });
+        it('union unionall', () => {
+            const b = babi([
+                'union',
+                ['select', ['from', ['alias', 'a']]],
+                ['select', ['from', ['alias', 'b']]],
+                ['select', ['from', ['alias', 'c']]],
+            ], []);
+            chai_1.assert.lengthOf(b.validateMemory.selects, 3);
+            chai_1.assert.lengthOf(b.validateMemory.aliases, 3);
+            babi([
+                'unionall',
+                ['select', ['from', ['alias', 'a']]],
+                ['select', ['from', ['alias', 'b']]],
+                ['select', ['from', ['alias', 'c']]],
+            ], []);
         });
     });
 };

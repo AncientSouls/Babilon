@@ -1,11 +1,8 @@
 export declare const rules: {
     types: {
         data: string[];
-        get: string[];
         logic: string[];
         check: string[];
-        operator: string[];
-        fetch: string[];
     };
     expressions: {
         data: {
@@ -42,34 +39,10 @@ export declare const rules: {
         lte: {
             args: string[];
         };
-        add: {
-            args: string[];
-        };
-        plus: {
-            args: string[];
-        };
-        minus: {
-            args: string[];
-        };
-        multiply: {
-            args: string[];
-        };
-        divide: {
-            args: string[];
-        };
-        as: {
-            args: string[];
-        };
         order: {
             args: string[];
         };
         orders: {
-            all: string[];
-        };
-        group: {
-            args: string[];
-        };
-        groups: {
             all: string[];
         };
         limit: {
@@ -82,18 +55,12 @@ export declare const rules: {
             all: string[];
         };
         from: {
-            all: string[];
+            args: string[];
         };
         select: {
             unique: boolean;
             all: string[];
             handle: (last: any, flow: any) => any;
-        };
-        union: {
-            all: string[];
-        };
-        unionall: {
-            all: string[];
         };
     };
 };
@@ -102,29 +69,17 @@ export interface IResolverOptions {
     [name: string]: any;
 }
 export declare const resolverOptions: {
-    _column(name: any): string;
-    _checks: {
-        eq: string;
-        not: string;
-        gt: string;
-        gte: string;
-        lt: string;
-        lte: string;
+    _logic(last: any, flow: any): {
+        [x: string]: any;
     };
-    _operators: {
-        add: string;
-        plus: string;
-        minus: string;
-        multiply: string;
-        divide: string;
+    _check(last: any, flow: any): {
+        [x: number]: {
+            [x: string]: any;
+        };
     };
-    _logic(last: any, flow: any): string;
-    _check(last: any, flow: any): string;
-    _operator(last: any, flow: any): string;
     data(last: any, flow: any): any;
-    path(last: any, flow: any): string;
-    alias(last: any, flow: any): string;
-    as(last: any, flow: any): string;
+    path(last: any, flow: any): any;
+    alias(last: any, flow: any): any;
     and(last: any, flow: any): any;
     or(last: any, flow: any): any;
     eq(last: any, flow: any): any;
@@ -133,21 +88,12 @@ export declare const resolverOptions: {
     gte(last: any, flow: any): any;
     lt(last: any, flow: any): any;
     lte(last: any, flow: any): any;
-    add(last: any, flow: any): any;
-    plus(last: any, flow: any): any;
-    minus(last: any, flow: any): any;
-    multiply(last: any, flow: any): any;
-    divide(last: any, flow: any): any;
-    order(last: any, flow: any): string;
-    orders(last: any, flow: any): any;
-    group(last: any, flow: any): any;
-    groups(last: any, flow: any): any;
+    order(last: any, flow: any): any[];
+    orders(last: any, flow: any): {};
     limit(last: any, flow: any): any;
     skip(last: any, flow: any): any;
-    returns(last: any, flow: any): any;
+    returns(last: any, flow: any): {};
     from(last: any, flow: any): any;
-    select(last: any, flow: any): string;
-    union(last: any, flow: any): string;
-    unionall(last: any, flow: any): string;
+    select(last: any, flow: any): any;
 };
 export declare const createResolver: (options: any) => (last: any, flow: any) => void;

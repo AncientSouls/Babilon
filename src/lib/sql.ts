@@ -5,10 +5,11 @@ import { rules as _rules, createValidators } from './validators';
 export const rules = {
   types: {
     data: ['string','number','boolean'],
-    get: ['!data','!path',':logic',':check',':operator'],
+    get: ['!data','!path',':logic',':check',':operator',':fetch'],
     logic: ['!and','!or'],
     check: ['!eq','!not','!gt','!gte','!lt','!lte'],
     operator: ['!add','!plus','!minus','!multiply','!divide'],
+    fetch: ['!select','!union','!unionall'],
   },
   expressions: {
     data: { args: [':data'] },
@@ -47,8 +48,11 @@ export const rules = {
 
     select: {
       unique: true, all: ['!returns','!from','!and','!orders','!groups','!limit','!skip'],
-      validate: _rules.expressions.select.validate,
+      handle: _rules.expressions.select.handle,
     },
+
+    union: { all: [':fetch'] },
+    unionall: { all: [':fetch'] },
   },
 };
 
@@ -135,7 +139,7 @@ export const resolverOptions = {
   from(last, flow) { return last.resolveMemory.join(','); },
 
   select(last, flow) {
-    let result = `select`;
+    let result = `(select`;
     const temp: any = {};
     _.each(last.args, (exp, i) => temp[exp[0]] = last.resolveMemory[i]);
     result += ` ${_.has(temp, 'returns') ? temp.returns : '*'}`;
@@ -145,8 +149,12 @@ export const resolverOptions = {
     if (_.has(temp, 'groups')) result += ` group by ${temp.groups}`;
     if (_.has(temp, 'limit')) result += ` limit ${temp.limit}`;
     if (_.has(temp, 'skip')) result += ` offset ${temp.skip}`;
+    result += ')';
     return result;
   },
+
+  union(last, flow) { return _.map(last.resolveMemory, m => `${m}`).join(' union '); },
+  unionall(last, flow) { return _.map(last.resolveMemory, m => `${m}`).join(' union all '); },
 };
 
 export const createResolver = options => (last, flow) => {

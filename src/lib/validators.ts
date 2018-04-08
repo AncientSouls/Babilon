@@ -9,7 +9,7 @@ export interface IRules {
       args?: string[];
       all?: string[];
       unique?: boolean;
-      validate?: (last, flow) => any;
+      handle?: (last, flow) => any;
     };
   };
 }
@@ -17,15 +17,18 @@ export interface IRules {
 export const rules: IRules = {
   types: {
     data: ['undefined','string','number','boolean','object','array'],
-    get: ['!data','!path',':logic',':check',':operator'],
+    get: ['!data','!path',':logic',':check',':operator',':fetch'],
     logic: ['!and','!or'],
     check: ['!eq','!not','!gt','!gte','!lt','!lte'],
     operator: ['!add','!plus','!minus','!multiply','!divide'],
+    fetch: ['!select','!union','!unionall'],
   },
   expressions: {
     data: { args: [':data'] },
     path: { args: ['string'], all: ['string'] },
-    alias: { args: ['string', '?string'] },
+    alias: {
+      args: ['string', '?string'],
+    },
     as: { args: [':get','?string'] },
 
     and: { all: [':get'] },
@@ -58,13 +61,17 @@ export const rules: IRules = {
 
     select: {
       unique: true,
-      all: ['!returns','!from','!and','!orders','!groups','!limit','!skip'], 
-      validate(last, flow) {
+      all: ['!returns','!from','!and','!orders','!groups','!limit','!skip'],
+
+      handle(last, flow) {
         if (!last.validateMemory.expressions.from) {
           error(last.exp[0], `select required expression from`, flow);
         }
       },
     },
+
+    union: { all: [':fetch'] },
+    unionall: { all: [':fetch'] },
   },
 };
 
@@ -72,7 +79,9 @@ export const rules: IRules = {
 
 export const isType = (last, rules, exp, arg, i) => {
   if (arg[0] === ':') {
-    if (isTypes(last, rules, rules.types[_.trimStart(arg, ':')], exp, i)) {
+    const type = _.trimStart(arg, ':');
+    if (!rules.types[type]) throw new Error(`type ${arg} is not defined`);
+    if (isTypes(last, rules, rules.types[type], exp, i)) {
       return true;
     }
   } else if (arg[0] === '!') {
@@ -107,7 +116,7 @@ export const createValidators = (rules: IRules) => {
   const validators = {};
   _.each(rules.expressions, (rule, name) => {
     validators[name] = (last, flow) => {
-      flow.validateMemory = flow.validateMemory || { sources: [] };
+      flow.validateMemory = flow.validateMemory || { aliases: [], selects: [] };
       last.validateMemory = last.validateMemory || { expressions: {} };
 
       if (rule.args) {
@@ -129,7 +138,7 @@ export const createValidators = (rules: IRules) => {
         const repeats = {};
         for (e = 1; e < last.exp.length; e++) {
           if (!isTypes(last, rules, rule.all, last.exp[e], e - 1)) {
-            return error(last.exp[0], `arg [${e - 1}] is not any of all [${rule.all}]`, flow);
+            return error(last.exp[0], `arg [${e - 1}] not all correspond to the type [${rule.all}]`, flow);
           }
           if (_.isArray(last.exp[e])) {
             repeats[last.exp[e][0]] = repeats[last.exp[e][0]] || 0;
@@ -140,7 +149,9 @@ export const createValidators = (rules: IRules) => {
           }
         }
       }
-      if (rule.validate) rule.validate(last, flow);
+      if (name === 'select') flow.validateMemory.selects.push(last);
+      if (name === 'alias') flow.validateMemory.aliases.push(last);
+      if (rule.handle) rule.handle(last, flow);
     };
   });
 
