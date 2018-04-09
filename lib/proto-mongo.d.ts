@@ -65,9 +65,6 @@ export declare const rules: {
     };
 };
 export declare const validators: {};
-export interface IResolverOptions {
-    [name: string]: any;
-}
 export declare const resolverOptions: {
     _logic(last: any, flow: any): {
         [x: string]: any;

@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const babilon_1 = require("../lib/babilon");
-const sql_1 = require("../lib/sql");
-const resolver = sql_1.createResolver(sql_1.resolverOptions);
+const proto_sql_1 = require("../lib/proto-sql");
+const resolver = proto_sql_1.createResolver(proto_sql_1.resolverOptions);
 const babi = (exp, result) => {
-    const b = babilon_1.babilon({ resolver, validators: sql_1.validators, exp });
+    const b = babilon_1.babilon({ resolver, validators: proto_sql_1.validators, exp });
     chai_1.assert.deepEqual(b.errors, []);
     chai_1.assert.deepEqual(b.result, result);
     return b;
@@ -114,4 +114,4 @@ exports.default = () => {
         });
     });
 };
-//# sourceMappingURL=sql.js.map
+//# sourceMappingURL=proto-sql.js.map

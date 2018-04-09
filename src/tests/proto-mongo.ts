@@ -8,7 +8,7 @@ import {
   createResolver,
   resolverOptions,
   validators,
-} from '../lib/mongo';
+} from '../lib/proto-mongo';
 
 const resolver = createResolver(resolverOptions);
 

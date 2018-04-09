@@ -8,7 +8,7 @@ import {
   createResolver,
   resolverOptions,
   validators,
-} from '../lib/sql';
+} from '../lib/proto-sql';
 
 const resolver = createResolver(resolverOptions);
 

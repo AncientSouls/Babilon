@@ -41,10 +41,6 @@ export const rules = {
 
 export const validators = createValidators(rules);
 
-export interface IResolverOptions {
-  [name: string]: any;
-}
-
 export const resolverOptions = {
   _logic(last, flow) {
     return { [`$${last.exp[0]}`]: last.resolveMemory };
