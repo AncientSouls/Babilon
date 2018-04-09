@@ -98,9 +98,6 @@ export declare const rules: {
     };
 };
 export declare const validators: {};
-export interface IResolverOptions {
-    [name: string]: any;
-}
 export declare const resolverOptions: {
     _column(name: any): string;
     _checks: {

@@ -58,10 +58,6 @@ export const rules = {
 
 export const validators = createValidators(rules);
 
-export interface IResolverOptions {
-  [name: string]: any;
-}
-
 export const resolverOptions = {
   _column(name) {
     return `[${name}]`;
