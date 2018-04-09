@@ -3,12 +3,12 @@ require('source-map-support').install();
 
 import validators from './validators';
 import babilon from './babilon';
-import sql from './sql';
-import mongo from './mongo';
+import protoSql from './proto-sql';
+import protoMongo from './proto-mongo';
 
 describe('AncientSouls/Babilon:', () => {
   validators();
   babilon();
-  sql();
-  mongo();
+  protoSql();
+  protoMongo();
 });
