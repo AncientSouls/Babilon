@@ -78,12 +78,30 @@ exports.default = () => {
             babi(['from', ['alias', 'a'], ['alias', 'a', 'b']], []);
         });
         it('select', () => {
-            babi([
-                'select',
-                ['returns', ['path', 'a'], ['as', ['data', 123], 'x']],
-                ['from', ['alias', 'a'], ['alias', 'a', 'b']],
-                ['and', ['data', 123], ['data', 123]],
-                ['orders', ['order', ['path', 'a']], ['order', ['path', 'b', 'c'], false]],
+            babi(['select',
+                ['returns',
+                    ['path', 'z', 'a'],
+                    ['as', ['data', 123], 'q'],
+                    ['as',
+                        ['or',
+                            ['eq', ['path', 'x', 'b'], ['data', 123]],
+                            ['eq', ['path', 'x', 'c'], ['data', 123]],
+                        ],
+                        'w',
+                    ],
+                ],
+                ['from',
+                    ['alias', 'x'],
+                    ['alias', 'y', 'z'],
+                ],
+                ['and',
+                    ['gt', ['path', 'z', 'a'], ['data', 10]],
+                    ['or',
+                        ['eq', ['path', 'x', 'b'], ['data', 123]],
+                        ['eq', ['path', 'x', 'c'], ['data', 123]],
+                    ],
+                ],
+                ['orders', ['order', ['path', 'z', 'a']], ['order', ['path', 'x', 'b'], false]],
                 ['limit', 10], ['skip', 10],
             ], []);
             babi([

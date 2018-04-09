@@ -81,15 +81,33 @@ export default () => {
     });
     it('select', () => {
       babi(
-        [
-          'select',
-          ['returns', ['path', 'a'], ['as', ['data', 123], 'x']],
-          ['from', ['alias', 'a'], ['alias', 'a', 'b']],
-          ['and', ['data', 123], ['data', 123]],
-          ['orders', ['order', ['path', 'a']], ['order', ['path', 'b', 'c'], false]],
+        ['select',
+          ['returns',
+            ['path','z','a'],
+            ['as',['data',123],'q'],
+            ['as',
+              ['or',
+                ['eq',['path','x','b'],['data',123]],
+                ['eq',['path','x','c'],['data',123]],
+              ],
+              'w',
+            ],
+          ],
+          ['from',
+            ['alias','x'],
+            ['alias','y','z'],
+          ],
+          ['and',
+            ['gt',['path','z','a'],['data',10]],
+            ['or',
+              ['eq',['path','x','b'],['data',123]],
+              ['eq',['path','x','c'],['data',123]],
+            ],
+          ],
+          ['orders', ['order', ['path', 'z', 'a']], ['order', ['path', 'x', 'b'], false]],
           ['limit', 10], ['skip', 10],
         ],
-        '(select [a],123 as [x] from [a],[a] as [b] where (123) and (123) order by [a] ASC,[b].[c] DESC limit 10 offset 10)',
+        '(select [z].[a],123 as [q],([x].[b] = 123) or ([x].[c] = 123) as [w] from [x],[y] as [z] where ([z].[a] > 10) and (([x].[b] = 123) or ([x].[c] = 123)) order by [z].[a] ASC,[x].[b] DESC limit 10 offset 10)',
       );
     });
     it('union unionall', () => {

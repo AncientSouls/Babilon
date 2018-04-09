@@ -39,3 +39,4 @@ export declare const validate: (last: IStep, flow: IFlow) => void;
 export declare const error: (emitter: any, message: any, flow: IFlow) => void;
 export declare const back: (last: any, flow: any) => void;
 export declare const babilon: IBabilon;
+export default babilon;
