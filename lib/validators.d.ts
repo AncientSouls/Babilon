@@ -1,16 +1,24 @@
+export interface IRule {
+    args?: string[];
+    all?: string[];
+    unique?: boolean;
+    handle?: (last, flow) => any;
+}
 export interface IRules {
     types: {
         [name: string]: string[];
     };
     expressions: {
-        [name: string]: {
-            args?: string[];
-            all?: string[];
-            unique?: boolean;
-            handle?: (last, flow) => any;
-        };
+        [name: string]: IRule;
     };
 }
+export interface IRuleFinalized {
+    args?: string[][];
+    all?: string[];
+    unique?: boolean;
+}
+export declare const finalizeVariants: (rules: IRules, variants: string[]) => any[];
+export declare const finalize: (rules: IRules, name: string) => IRuleFinalized;
 export declare const rules: IRules;
 export declare const isType: (last: any, rules: any, exp: any, arg: any, i: any) => boolean;
 export declare const isTypes: (last: any, rules: any, types: any, exp: any, i: any) => boolean;
