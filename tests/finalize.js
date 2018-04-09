@@ -34,7 +34,7 @@ exports.default = () => {
                 ],
             ],
         });
-        console.log(validators_1.finalize(validators_1.rules, 'and'), {
+        chai_1.assert.deepEqual(validators_1.finalize(validators_1.rules, 'and'), {
             name: 'and',
             rule: {
                 all: [':get'],
