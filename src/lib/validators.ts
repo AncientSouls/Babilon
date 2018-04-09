@@ -2,17 +2,68 @@ import * as _ from 'lodash';
 
 import { error } from './babilon';
 
+export interface IRule {
+  args?: string[];
+  all?: string[];
+  unique?: boolean;
+  handle?: (last, flow) => any;
+}
+
 export interface IRules {
   types: { [name: string]: string[] };
   expressions: {
-    [name: string]: {
-      args?: string[];
-      all?: string[];
-      unique?: boolean;
-      handle?: (last, flow) => any;
-    };
+    [name: string]: IRule;
   };
 }
+
+export interface IRuleFinalized {
+  args?: string[][];
+  all?: string[];
+  unique?: boolean;
+}
+
+export const finalizeVariants = (rules: IRules, variants: string[]) => {
+  const results = [];
+  _.each(variants, (variant) => {
+    if (variant[0] === ':') results.push(...finalizeVariants(rules, rules.types[_.trimStart(variant, ':')]));
+    else results.push(variant);
+  });
+  return results;
+};
+
+export const finalize = (rules: IRules, name: string): IRuleFinalized => {
+  if (!rules.expressions[name]) return;
+  const result: any = {
+    name,
+    rule: rules.expressions[name],
+    unique: rules.expressions[name].unique,
+  };
+  if (rules.expressions[name].args) {
+    result.args = [];
+    _.each(rules.expressions[name].args, (a) => {
+      const variants = [];
+      const arg = _.trimStart(a, '?');
+      if (arg[0] === ':') {
+        variants.push(...finalizeVariants(rules, rules.types[_.trimStart(arg, ':')]));
+      } else {
+        variants.push(arg);
+      }
+      result.args.push(variants);
+    });
+  }
+  if (rules.expressions[name].all) {
+    result.all = [];
+    _.each(rules.expressions[name].all, (a) => {
+      const arg = _.trimStart(a, '?');
+      if (arg[0] === ':') {
+        result.all.push(...finalizeVariants(rules, rules.types[_.trimStart(arg, ':')]));
+      } else {
+        result.all.push(arg);
+      }
+    });
+  }
+  return result;
+};
 
 export const rules: IRules = {
   types: {
