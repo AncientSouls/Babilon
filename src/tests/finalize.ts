@@ -40,7 +40,7 @@ export default () => {
         ],
       },
     );
-    console.log(
+    assert.deepEqual(
       finalize(rules, 'and'),
       {
         name: 'and',
