@@ -16,6 +16,10 @@ export interface IRules {
   };
 }
 
+export interface IRulesFinalized {
+  [name: string]: IRuleFinalized;
+}
+
 export interface IRuleFinalized {
   args?: string[][];
   all?: string[];
@@ -36,7 +40,6 @@ export const finalize = (rules: IRules, name: string): IRuleFinalized => {
   const result: any = {
     name,
     rule: rules.expressions[name],
-    unique: rules.expressions[name].unique,
   };
   if (rules.expressions[name].args) {
     result.args = [];
@@ -65,17 +68,27 @@ export const finalize = (rules: IRules, name: string): IRuleFinalized => {
   return result;
 };
 
+export const finalizeRules = (rules: IRules): IRulesFinalized => {
+  const finalized = {};
+  _.each(rules.expressions, (rule, name) => {
+    finalized[name] = finalize(rules, name);
+  });
+  return finalized;
+};
+
 export const rules: IRules = {
   types: {
     data: ['undefined','string','number','boolean','object','array'],
-    get: ['!data','!path',':logic',':check',':operator',':fetch'],
+    get: ['!data','!variable','!path',':logic',':check',':operator',':fetch'],
     logic: ['!and','!or'],
     check: ['!eq','!not','!gt','!gte','!lt','!lte'],
     operator: ['!add','!plus','!minus','!multiply','!divide'],
-    fetch: ['!select','!union','!unionall'],
+    fetch: ['!select',':unions'],
+    unions: ['!union','!unionall'],
   },
   expressions: {
     data: { args: [':data'] },
+    variable: { args: ['string'] },
     path: { args: ['string'], all: ['string'] },
     alias: {
       args: ['string', '?string'],
@@ -92,11 +105,11 @@ export const rules: IRules = {
     lt: { args: [':get',':get'] },
     lte: { args: [':get',':get'] },
 
-    add: { args: [':get',':get'] },
-    plus: { args: [':get',':get'] },
-    minus: { args: [':get',':get'] },
-    multiply: { args: [':get',':get'] },
-    divide: { args: [':get',':get'] },
+    add: { all: [':get'] },
+    plus: { all: [':get'] },
+    minus: { all: [':get'] },
+    multiply: { all: [':get'] },
+    divide: { all: [':get'] },
     
     order: { args: ['!path','?boolean'] },
     orders: { all: ['!order'] },
@@ -107,7 +120,7 @@ export const rules: IRules = {
     limit: { args: ['number'] },
     skip: { args: ['number'] },
 
-    returns: { all: ['!as','!path'] },
+    returns: { all: ['!as','!path',':get'] },
     from: { all: ['!alias'] },
 
     select: {

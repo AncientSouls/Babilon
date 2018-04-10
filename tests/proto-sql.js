@@ -5,7 +5,7 @@ const babilon_1 = require("../lib/babilon");
 const proto_sql_1 = require("../lib/proto-sql");
 const resolver = proto_sql_1.createResolver(proto_sql_1.resolverOptions);
 const babi = (exp, result) => {
-    const b = babilon_1.babilon({ resolver, validators: proto_sql_1.validators, exp });
+    const b = babilon_1.babilon({ resolver, validators: proto_sql_1.validators, exp, variables: { a: { b: { c: 123 } } } });
     chai_1.assert.deepEqual(b.errors, []);
     chai_1.assert.deepEqual(b.result, result);
     return b;
@@ -18,6 +18,9 @@ exports.default = () => {
             babi(['data', 123], '123');
             const b = babi(['data', 'abc'], '$0');
             chai_1.assert.deepEqual(b.resolveMemory.params, ['abc']);
+        });
+        it('variable', () => {
+            babi(['variable', 'a.b.c'], '123');
         });
         it('path', () => {
             babi(['path', 'a'], '[a]');
@@ -43,11 +46,11 @@ exports.default = () => {
             babi(['lte', ['data', 123], ['data', 123]], '123 <= 123');
         });
         it('operators', () => {
-            babi(['add', ['data', 'abc'], ['data', 'def']], '$0 || $1');
-            babi(['plus', ['data', 123], ['data', 123]], '123 + 123');
-            babi(['minus', ['data', 123], ['data', 123]], '123 - 123');
-            babi(['multiply', ['data', 123], ['data', 123]], '123 * 123');
-            babi(['divide', ['data', 123], ['data', 123]], '123 / 123');
+            babi(['add', ['data', 'abc'], ['data', 'def']], '($0)||($1)');
+            babi(['plus', ['data', 123], ['data', 123]], '(123)+(123)');
+            babi(['minus', ['data', 123], ['data', 123]], '(123)-(123)');
+            babi(['multiply', ['data', 123], ['data', 123]], '(123)*(123)');
+            babi(['divide', ['data', 123], ['data', 123]], '(123)/(123)');
         });
         it('order orders', () => {
             babi(['order', ['path', 'a']], '[a] ASC');

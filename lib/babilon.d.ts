@@ -22,6 +22,7 @@ export interface IError {
 }
 export interface IFlow {
     exp: TExp;
+    variables?: {};
     path?: IStep[];
     validators?: IValidators;
     validate?: IValidator;

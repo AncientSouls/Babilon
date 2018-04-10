@@ -6,9 +6,13 @@ export declare const rules: {
         check: string[];
         operator: string[];
         fetch: string[];
+        unions: string[];
     };
     expressions: {
         data: {
+            args: string[];
+        };
+        variable: {
             args: string[];
         };
         path: {
@@ -43,19 +47,19 @@ export declare const rules: {
             args: string[];
         };
         add: {
-            args: string[];
+            all: string[];
         };
         plus: {
-            args: string[];
+            all: string[];
         };
         minus: {
-            args: string[];
+            all: string[];
         };
         multiply: {
-            args: string[];
+            all: string[];
         };
         divide: {
-            args: string[];
+            all: string[];
         };
         as: {
             args: string[];
@@ -118,7 +122,9 @@ export declare const resolverOptions: {
     _logic(last: any, flow: any): string;
     _check(last: any, flow: any): string;
     _operator(last: any, flow: any): string;
+    _param(flow: any, data: any): string;
     data(last: any, flow: any): any;
+    variable(last: any, flow: any): any;
     path(last: any, flow: any): string;
     alias(last: any, flow: any): string;
     as(last: any, flow: any): string;

@@ -5,23 +5,25 @@ import { rules as _rules, createValidators } from './validators';
 export const rules = {
   types: {
     data: ['undefined','string','number','boolean','object','array'],
+    get: ['!data','!variable'],
     logic: ['!and','!or'],
     check: ['!eq','!not','!gt','!gte','!lt','!lte'],
   },
   expressions: {
     data: { args: [':data'] },
+    variable: { args: ['string'] },
     path: { args: ['string'], all: ['string'] },
     alias: { args: ['string'] },
 
     and: { all: [':logic',':check'] },
     or: { all: [':logic',':check'] },
 
-    eq: { args: ['!path','!data'] },
-    not: { args: ['!path','!data'] },
-    gt: { args: ['!path','!data'] },
-    gte: { args: ['!path','!data'] },
-    lt: { args: ['!path','!data'] },
-    lte: { args: ['!path','!data'] },
+    eq: { args: ['!path',':get'] },
+    not: { args: ['!path',':get'] },
+    gt: { args: ['!path',':get'] },
+    gte: { args: ['!path',':get'] },
+    lt: { args: ['!path',':get'] },
+    lte: { args: ['!path',':get'] },
     
     order: { args: ['!path','?boolean'] },
     orders: { all: ['!order'] },
@@ -50,6 +52,10 @@ export const resolverOptions = {
   },
   data(last, flow) {
     return last.exp[1];
+  },
+  variable(last, flow) {
+    const path = last.exp[1];
+    return path.length ? _.get(flow.variables, path) : flow.variables;
   },
   path(last, flow) { return last.exp[1]; },
   alias(last, flow) { return last.exp[1]; },

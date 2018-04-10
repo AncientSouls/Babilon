@@ -1,6 +1,6 @@
 # Ancient Babilon
 
-:large_orange_diamond: One data select language will rule them all.
+One data select language will rule them all.
 
 [![NPM](https://img.shields.io/npm/v/ancient-babilon.svg)](https://www.npmjs.com/package/ancient-babilon)
 [![Build Status](https://travis-ci.org/AncientSouls/PostgreSQL.svg?branch=master)](https://travis-ci.org/AncientSouls/PostgreSQL)

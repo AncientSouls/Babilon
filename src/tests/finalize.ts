@@ -12,10 +12,10 @@ export default () => {
       {
         name: 'as',
         rule: { args: [':get', '?string'] },
-        unique: undefined,
         args: [
           [
             '!data',
+            '!variable',
             '!path',
             '!and',
             '!or',
@@ -47,9 +47,9 @@ export default () => {
         rule: {
           all: [':get'],
         },
-        unique: undefined,
         all: [
           '!data',
+          '!variable',
           '!path',
           '!and',
           '!or',

@@ -6,6 +6,8 @@ import finalize from './finalize';
 import babilon from './babilon';
 import protoSql from './proto-sql';
 import protoMongo from './proto-mongo';
+import returnsReferences from './returns-references';
+import restrict from './restrict';
 
 describe('AncientSouls/Babilon:', () => {
   validators();
@@ -13,4 +15,6 @@ describe('AncientSouls/Babilon:', () => {
   babilon();
   protoSql();
   protoMongo();
+  returnsReferences();
+  restrict();
 });

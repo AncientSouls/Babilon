@@ -13,7 +13,7 @@ import {
 const resolver = createResolver(resolverOptions);
 
 const babi = (exp, result) => {
-  const b = babilon({ resolver, validators, exp });
+  const b = babilon({ resolver, validators, exp, variables: { a: { b: { c: 123 } } } });
   assert.deepEqual(b.errors, []);
   assert.deepEqual(b.result, result);
   return b;
@@ -27,6 +27,9 @@ export default () => {
       babi(['data', 123], '123');
       const b = babi(['data', 'abc'], '$0');
       assert.deepEqual(b.resolveMemory.params, ['abc']);
+    });
+    it('variable', () => {
+      babi(['variable', 'a.b.c'], '123');
     });
     it('path', () => {
       babi(['path', 'a'], '[a]');
@@ -52,11 +55,11 @@ export default () => {
       babi(['lte', ['data', 123], ['data', 123]], '123 <= 123');
     });
     it('operators', () => {
-      babi(['add', ['data', 'abc'], ['data', 'def']], '$0 || $1');
-      babi(['plus', ['data', 123], ['data', 123]], '123 + 123');
-      babi(['minus', ['data', 123], ['data', 123]], '123 - 123');
-      babi(['multiply', ['data', 123], ['data', 123]], '123 * 123');
-      babi(['divide', ['data', 123], ['data', 123]], '123 / 123');
+      babi(['add', ['data', 'abc'], ['data', 'def']], '($0)||($1)');
+      babi(['plus', ['data', 123], ['data', 123]], '(123)+(123)');
+      babi(['minus', ['data', 123], ['data', 123]], '(123)-(123)');
+      babi(['multiply', ['data', 123], ['data', 123]], '(123)*(123)');
+      babi(['divide', ['data', 123], ['data', 123]], '(123)/(123)');
     });
     it('order orders', () => {
       babi(['order', ['path','a']], '[a] ASC');
