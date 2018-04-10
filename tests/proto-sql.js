@@ -43,11 +43,11 @@ exports.default = () => {
             babi(['lte', ['data', 123], ['data', 123]], '123 <= 123');
         });
         it('operators', () => {
-            babi(['add', ['data', 'abc'], ['data', 'def']], '$0 || $1');
-            babi(['plus', ['data', 123], ['data', 123]], '123 + 123');
-            babi(['minus', ['data', 123], ['data', 123]], '123 - 123');
-            babi(['multiply', ['data', 123], ['data', 123]], '123 * 123');
-            babi(['divide', ['data', 123], ['data', 123]], '123 / 123');
+            babi(['add', ['data', 'abc'], ['data', 'def']], '($0)||($1)');
+            babi(['plus', ['data', 123], ['data', 123]], '(123)+(123)');
+            babi(['minus', ['data', 123], ['data', 123]], '(123)-(123)');
+            babi(['multiply', ['data', 123], ['data', 123]], '(123)*(123)');
+            babi(['divide', ['data', 123], ['data', 123]], '(123)/(123)');
         });
         it('order orders', () => {
             babi(['order', ['path', 'a']], '[a] ASC');

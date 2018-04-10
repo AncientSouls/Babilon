@@ -43,19 +43,19 @@ export declare const rules: {
             args: string[];
         };
         add: {
-            args: string[];
+            all: string[];
         };
         plus: {
-            args: string[];
+            all: string[];
         };
         minus: {
-            args: string[];
+            all: string[];
         };
         multiply: {
-            args: string[];
+            all: string[];
         };
         divide: {
-            args: string[];
+            all: string[];
         };
         as: {
             args: string[];

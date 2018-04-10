@@ -26,11 +26,11 @@ export const rules = {
     lt: { args: [':get',':get'] },
     lte: { args: [':get',':get'] },
 
-    add: { args: [':get',':get'] },
-    plus: { args: [':get',':get'] },
-    minus: { args: [':get',':get'] },
-    multiply: { args: [':get',':get'] },
-    divide: { args: [':get',':get'] },
+    add: { all: [':get'] },
+    plus: { all: [':get'] },
+    minus: { all: [':get'] },
+    multiply: { all: [':get'] },
+    divide: { all: [':get'] },
 
     as: { args: [':get','?string'] },
     
@@ -43,7 +43,7 @@ export const rules = {
     limit: { args: ['number'] },
     skip: { args: ['number'] },
 
-    returns: { all: ['!as','!path'] },
+    returns: { all: ['!as','!path',':get'] },
     from: { all: ['!alias'] },
 
     select: {
@@ -84,7 +84,7 @@ export const resolverOptions = {
     return `${last.resolveMemory[0]} ${this._checks[last.exp[0]]} ${last.resolveMemory[1]}`;
   },
   _operator(last, flow) {
-    return `${last.resolveMemory[0]} ${this._operators[last.exp[0]]} ${last.resolveMemory[1]}`;
+    return _.map(last.resolveMemory, m => `(${m})`).join(`${this._operators[last.exp[0]]}`);
   },
   data(last, flow) {
     if (_.isBoolean(last.exp[1]) || _.isNumber(last.exp[1])) {

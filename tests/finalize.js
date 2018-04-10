@@ -7,7 +7,6 @@ exports.default = () => {
         chai_1.assert.deepEqual(validators_1.finalize(validators_1.rules, 'as'), {
             name: 'as',
             rule: { args: [':get', '?string'] },
-            unique: undefined,
             args: [
                 [
                     '!data',
@@ -39,7 +38,6 @@ exports.default = () => {
             rule: {
                 all: [':get'],
             },
-            unique: undefined,
             all: [
                 '!data',
                 '!path',
