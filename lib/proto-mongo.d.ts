@@ -1,11 +1,15 @@
 export declare const rules: {
     types: {
         data: string[];
+        get: string[];
         logic: string[];
         check: string[];
     };
     expressions: {
         data: {
+            args: string[];
+        };
+        variable: {
             args: string[];
         };
         path: {
@@ -75,6 +79,7 @@ export declare const resolverOptions: {
         };
     };
     data(last: any, flow: any): any;
+    variable(last: any, flow: any): any;
     path(last: any, flow: any): any;
     alias(last: any, flow: any): any;
     and(last: any, flow: any): any;

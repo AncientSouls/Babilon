@@ -18,6 +18,9 @@ exports.default = () => {
             babi(['data', { a: 1, b: 2, c: 3 }], []);
             babi(['data'], [{ path: [], emitter: 'data', message: 'arg [0] :data is not defined' }]);
         });
+        it('data', () => {
+            babi(['variable', 'a.b.c'], []);
+        });
         it('path', () => {
             babi(['path', 'a'], []);
             babi(['path', 'a', 'b'], []);

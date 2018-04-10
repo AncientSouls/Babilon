@@ -12,6 +12,9 @@ export declare const rules: {
         data: {
             args: string[];
         };
+        variable: {
+            args: string[];
+        };
         path: {
             args: string[];
             all: string[];
@@ -119,7 +122,9 @@ export declare const resolverOptions: {
     _logic(last: any, flow: any): string;
     _check(last: any, flow: any): string;
     _operator(last: any, flow: any): string;
+    _param(flow: any, data: any): string;
     data(last: any, flow: any): any;
+    variable(last: any, flow: any): any;
     path(last: any, flow: any): string;
     alias(last: any, flow: any): string;
     as(last: any, flow: any): string;

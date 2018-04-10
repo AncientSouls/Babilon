@@ -5,7 +5,7 @@ import { rules as _rules, createValidators } from './validators';
 export const rules = {
   types: {
     data: ['string','number','boolean'],
-    get: ['!data','!path',':logic',':check',':operator',':fetch'],
+    get: ['!data','!variable','!path',':logic',':check',':operator',':fetch'],
     logic: ['!and','!or'],
     check: ['!eq','!not','!gt','!gte','!lt','!lte'],
     operator: ['!add','!plus','!minus','!multiply','!divide'],
@@ -14,6 +14,7 @@ export const rules = {
   },
   expressions: {
     data: { args: [':data'] },
+    variable: { args: ['string'] },
     path: { args: ['string'], all: ['string'] },
     alias: { args: ['string', '?string'] },
 
@@ -87,13 +88,26 @@ export const resolverOptions = {
   _operator(last, flow) {
     return _.map(last.resolveMemory, m => `(${m})`).join(`${this._operators[last.exp[0]]}`);
   },
+  _param(flow, data) {
+    flow.resolveMemory.params.push(data);
+    return `$${flow.resolveMemory.params.length - 1}`;
+  },
   data(last, flow) {
     if (_.isBoolean(last.exp[1]) || _.isNumber(last.exp[1])) {
       return last.exp[1].toString();
     }
     if (_.isString(last.exp[1])) {
-      flow.resolveMemory.params.push(last.exp[1]);
-      return `$${flow.resolveMemory.params.length - 1}`;
+      return this._param(flow, last.exp[1]);
+    }
+  },
+  variable(last, flow) {
+    const path = last.exp[1];
+    const data = path.length ? _.get(flow.variables, path) : flow.variables;
+    if (_.isBoolean(data) || _.isNumber(data)) {
+      return data.toString();
+    }
+    if (_.isString(data)) {
+      return this._param(flow, data);
     }
   },
   path(last, flow) {

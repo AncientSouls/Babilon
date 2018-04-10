@@ -79,7 +79,7 @@ export const finalizeRules = (rules: IRules): IRulesFinalized => {
 export const rules: IRules = {
   types: {
     data: ['undefined','string','number','boolean','object','array'],
-    get: ['!data','!path',':logic',':check',':operator',':fetch'],
+    get: ['!data','!variable','!path',':logic',':check',':operator',':fetch'],
     logic: ['!and','!or'],
     check: ['!eq','!not','!gt','!gte','!lt','!lte'],
     operator: ['!add','!plus','!minus','!multiply','!divide'],
@@ -88,6 +88,7 @@ export const rules: IRules = {
   },
   expressions: {
     data: { args: [':data'] },
+    variable: { args: ['string'] },
     path: { args: ['string'], all: ['string'] },
     alias: {
       args: ['string', '?string'],

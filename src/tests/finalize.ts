@@ -15,6 +15,7 @@ export default () => {
         args: [
           [
             '!data',
+            '!variable',
             '!path',
             '!and',
             '!or',
@@ -48,6 +49,7 @@ export default () => {
         },
         all: [
           '!data',
+          '!variable',
           '!path',
           '!and',
           '!or',

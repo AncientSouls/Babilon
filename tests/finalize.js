@@ -10,6 +10,7 @@ exports.default = () => {
             args: [
                 [
                     '!data',
+                    '!variable',
                     '!path',
                     '!and',
                     '!or',
@@ -40,6 +41,7 @@ exports.default = () => {
             },
             all: [
                 '!data',
+                '!variable',
                 '!path',
                 '!and',
                 '!or',
