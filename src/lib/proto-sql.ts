@@ -9,7 +9,8 @@ export const rules = {
     logic: ['!and','!or'],
     check: ['!eq','!not','!gt','!gte','!lt','!lte'],
     operator: ['!add','!plus','!minus','!multiply','!divide'],
-    fetch: ['!select','!union','!unionall'],
+    fetch: ['!select',':unions'],
+    unions: ['!union','!unionall'],
   },
   expressions: {
     data: { args: [':data'] },

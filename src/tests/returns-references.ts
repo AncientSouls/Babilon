@@ -18,7 +18,7 @@ import {
 
 export default () => {
   it('returnsReferencesAs', () => {
-    const refs = returnsReferences(
+    const exp = returnsReferences(
       ['select',
         ['returns',
           ['path','z','a'],
@@ -47,21 +47,21 @@ export default () => {
       ],
       generateReturnsAs(),
     );
-    assert.lengthOf(refs, 3);
-    assert.deepEqual(refs[1][1], ['returns',
+    assert.lengthOf(exp, 3);
+    assert.deepEqual(exp[1][1], ['returns',
       ['as', ['data', 'x'], 'from'],
       ['as', ['path', 'x', 'id'], 'id'],
     ]);
-    assert.deepEqual(refs[2][1], ['returns',
+    assert.deepEqual(exp[2][1], ['returns',
       ['as', ['data', 'y'], 'from'],
       ['as', ['path', 'y', 'id'], 'id'],
     ]);
     const resolver = createResolver(resolverOptions);
-    const b = babilon({ resolver, validators, exp: refs });
+    const b = babilon({ resolver, validators, exp });
     assert.deepEqual(b.errors, []);
   });
   it('returnsReferencesString', () => {
-    const refs = returnsReferences(
+    const exp = returnsReferences(
       ['select',
         ['returns',
           ['path','z','a'],
@@ -90,15 +90,15 @@ export default () => {
       ],
       generateReturnsString(),
     );
-    assert.lengthOf(refs, 3);
-    assert.deepEqual(refs[1][1], ['returns',
+    assert.lengthOf(exp, 3);
+    assert.deepEqual(exp[1][1], ['returns',
       ['add', ['data', 'x'], ['data', '/'], ['path', 'x', 'id']],
     ]);
-    assert.deepEqual(refs[2][1], ['returns',
+    assert.deepEqual(exp[2][1], ['returns',
       ['add', ['data', 'y'], ['data', '/'], ['path', 'y', 'id']],
     ]);
     const resolver = createResolver(resolverOptions);
-    const b = babilon({ resolver, validators, exp: refs });
+    const b = babilon({ resolver, validators, exp });
     assert.deepEqual(b.errors, []);
   });
 };

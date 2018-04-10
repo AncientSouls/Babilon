@@ -6,6 +6,7 @@ export declare const rules: {
         check: string[];
         operator: string[];
         fetch: string[];
+        unions: string[];
     };
     expressions: {
         data: {
