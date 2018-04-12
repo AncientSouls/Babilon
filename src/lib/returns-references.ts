@@ -16,6 +16,7 @@ export const generateReturnsAs = (asFrom: string = 'from', asId: string = 'id', 
 export const returnsReferencesSelect = (exp: TExp, createReturns = generateReturnsAs()): TExp[] => {
   const i: any = {};
   _.each(exp, (exp, e) => e ? i[exp[0]] = e : null);
+  i.returns = i.returns || exp.length;
   const selects = [];
   _.each(exp[i.from], (from, f) => {
     if (f) {
