@@ -15,7 +15,7 @@ const resolver = createResolver(resolverOptions);
 const babi = (exp, result) => {
   const b = babilon({ resolver, validators, exp, variables: { a: { b: { c: 123 } } } });
   assert.deepEqual(b.errors, []);
-  assert.deepEqual(b.result, result);
+  assert.deepEqual(b.toString(), result);
   return b;
 };
 

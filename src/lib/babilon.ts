@@ -81,6 +81,12 @@ export const babilon: IBabilon = (flow) => {
   flow.validate = flow.validate || validate;
   flow.validators = flow.validators || validators;
   flow.errors = [];
+  flow.toString = () => {
+    if (flow.errors.length) {
+      throw new Error(`${flow.errors[0].emitter} ${flow.errors[0].path.map(p => `[${p}]`).join('')}: ${flow.errors[0].message}`);
+    }
+    return flow.result;
+  };
 
   let last;
   while (true) {
