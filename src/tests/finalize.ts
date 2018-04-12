@@ -3,7 +3,7 @@ import { assert } from 'chai';
 import {
   rules,
   finalize,
-} from '../lib/validators';
+} from '../lib/rules';
 
 export default () => {
   it('finalize', () => {

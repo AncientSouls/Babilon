@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
-const validators_1 = require("../lib/validators");
+const rules_1 = require("../lib/rules");
 exports.default = () => {
     it('finalize', () => {
-        chai_1.assert.deepEqual(validators_1.finalize(validators_1.rules, 'as'), {
+        chai_1.assert.deepEqual(rules_1.finalize(rules_1.rules, 'as'), {
             name: 'as',
             rule: { args: [':get', '?string'] },
             args: [
@@ -34,7 +34,7 @@ exports.default = () => {
                 ],
             ],
         });
-        chai_1.assert.deepEqual(validators_1.finalize(validators_1.rules, 'and'), {
+        chai_1.assert.deepEqual(rules_1.finalize(rules_1.rules, 'and'), {
             name: 'and',
             rule: {
                 all: [':get'],
