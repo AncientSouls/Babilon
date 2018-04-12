@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 
-import { rules as _rules, createValidators } from './validators';
+import { createValidators } from './validators';
+import { rules as _rules } from './rules';
 
 export const rules = {
   types: {
