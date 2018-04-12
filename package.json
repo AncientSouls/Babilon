@@ -1,7 +1,7 @@
 {
   "name": "ancient-babilon",
-  "version": "0.0.7",
-  "description": "One data select language will rule them all.",
+  "version": "0.0.8",
+  "description": "One data query language will rule them all.",
   "bugs": "https://github.com/AncientSouls/Babilon/issues",
   "repository": "AncientSouls/Babilon",
   "license": "MIT",
