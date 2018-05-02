@@ -9,25 +9,25 @@ export interface IStep {
 export interface IValidator {
     (last: IStep, flow: IFlow): void;
 }
-export interface IValidators {
-    [exp: string]: IValidator;
-}
 export interface IResolver {
-    (last: any, flow: any): void;
+    (last: IStep, flow: IFlow): void;
 }
 export interface IError {
     path: number[];
     emitter: string;
     message: string;
 }
+export interface IThrow {
+    (emitter: string, message: string): any;
+}
 export interface IFlow {
     exp: TExp;
     variables?: {};
     path?: IStep[];
-    validators?: IValidators;
     validate?: IValidator;
     resolver?: IResolver;
     errors?: IError[];
+    throw?: IThrow;
     result?: any;
     resolveMemory?: any;
     validateMemory?: any;
@@ -35,9 +35,7 @@ export interface IFlow {
 export interface IBabilon {
     (flow: IFlow): IFlow;
 }
-export declare const router: (flow: any) => void;
-export declare const validate: (last: IStep, flow: IFlow) => void;
-export declare const error: (emitter: any, message: any, flow: IFlow) => void;
+export declare const defaultThrow: IThrow;
 export declare const back: (last: any, flow: any) => void;
 export declare const babilon: IBabilon;
 export default babilon;

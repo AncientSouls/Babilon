@@ -47,7 +47,7 @@ exports.default = () => {
             ], generateRestricting(['abc', 'def']));
             chai_1.assert.deepEqual(exp[3][3], ['or', ['or', ['eq', ['path', 'x', 'restriction'], ['data', 'abc']], ['eq', ['path', 'x', 'restriction'], ['data', 'def']]], ['or', ['eq', ['path', 'z', 'restriction'], ['data', 'abc']], ['eq', ['path', 'z', 'restriction'], ['data', 'def']]]]);
             const resolver = proto_sql_1.createResolver(proto_sql_1.resolverOptions);
-            const b = babilon_1.babilon({ resolver, validators: proto_sql_1.validators, exp });
+            const b = babilon_1.babilon({ resolver, validate: proto_sql_1.validate, exp });
             chai_1.assert.deepEqual(b.errors, []);
         });
         it('restrictions alias', () => {
@@ -95,7 +95,7 @@ exports.default = () => {
             chai_1.assert.deepEqual(exp[3][3], ['or', ['eq', ['path', '_restrictions', 'subject'], ['data', 'abc']], ['eq', ['path', '_restrictions', 'subject'], ['data', 'def']]]);
             chai_1.assert.deepEqual(exp[3][4], ['or', ['eq', ['path', '_restrictions', 'from'], ['path', 'x', 'id']], ['eq', ['path', '_restrictions', 'from'], ['path', 'z', 'id']]]);
             const resolver = proto_sql_1.createResolver(proto_sql_1.resolverOptions);
-            const b = babilon_1.babilon({ resolver, validators: proto_sql_1.validators, exp });
+            const b = babilon_1.babilon({ resolver, validate: proto_sql_1.validate, exp });
             chai_1.assert.deepEqual(b.errors, []);
         });
     });

@@ -31,7 +31,7 @@ exports.default = () => {
             ['as', ['path', 'y', 'id'], 'id'],
         ]);
         const resolver = proto_sql_1.createResolver(proto_sql_1.resolverOptions);
-        const b = babilon_1.babilon({ resolver, validators: proto_sql_1.validators, exp });
+        const b = babilon_1.babilon({ resolver, validate: proto_sql_1.validate, exp });
         chai_1.assert.deepEqual(b.errors, []);
     });
     it('returnsReferencesAs', () => {
@@ -71,7 +71,7 @@ exports.default = () => {
             ['as', ['path', 'y', 'id'], 'id'],
         ]);
         const resolver = proto_sql_1.createResolver(proto_sql_1.resolverOptions);
-        const b = babilon_1.babilon({ resolver, validators: proto_sql_1.validators, exp });
+        const b = babilon_1.babilon({ resolver, validate: proto_sql_1.validate, exp });
         chai_1.assert.deepEqual(b.errors, []);
     });
     it('returnsReferencesString', () => {
@@ -109,7 +109,7 @@ exports.default = () => {
             ['add', ['data', 'y'], ['data', '/'], ['path', 'y', 'id']],
         ]);
         const resolver = proto_sql_1.createResolver(proto_sql_1.resolverOptions);
-        const b = babilon_1.babilon({ resolver, validators: proto_sql_1.validators, exp });
+        const b = babilon_1.babilon({ resolver, validate: proto_sql_1.validate, exp });
         chai_1.assert.deepEqual(b.errors, []);
     });
 };
