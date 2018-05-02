@@ -5,7 +5,7 @@ const babilon_1 = require("../lib/babilon");
 const proto_sql_1 = require("../lib/proto-sql");
 const resolver = proto_sql_1.createResolver(proto_sql_1.resolverOptions);
 const babi = (exp, result) => {
-    const b = babilon_1.babilon({ resolver, validators: proto_sql_1.validators, exp, variables: { a: { b: { c: 123 } } } });
+    const b = babilon_1.babilon({ resolver, validate: proto_sql_1.validate, exp, variables: { a: { b: { c: 123 } } } });
     chai_1.assert.deepEqual(b.errors, []);
     chai_1.assert.deepEqual(b.toString(), result);
     return b;

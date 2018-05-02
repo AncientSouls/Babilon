@@ -7,13 +7,13 @@ import {
 import {
   createResolver,
   resolverOptions,
-  validators,
+  validate,
 } from '../lib/proto-mongo';
 
 const resolver = createResolver(resolverOptions);
 
 const babi = (exp, result) => {
-  const b = babilon({ resolver, validators, exp });
+  const b = babilon({ resolver, validate, exp });
   assert.deepEqual(b.errors, []);
   assert.deepEqual(b.result, result);
   return b;

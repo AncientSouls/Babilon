@@ -1,65 +1,21 @@
 import * as _ from 'lodash';
 
-import { createValidators } from './validators';
-import { rules as _rules } from './rules';
+import { createValidate } from './validators';
+import { createRules, IRules } from './rules';
+import { IValidator } from './babilon';
 
-export const rules = {
-  types: {
-    data: ['string','number','boolean'],
-    get: ['!data','!variable','!path',':logic',':check',':operator',':fetch'],
-    logic: ['!and','!or'],
-    check: ['!eq','!not','!gt','!gte','!lt','!lte'],
-    operator: ['!add','!plus','!minus','!multiply','!divide'],
-    fetch: ['!select',':unions'],
-    unions: ['!union','!unionall'],
-  },
-  expressions: {
-    data: { args: [':data'] },
-    variable: { args: ['string'] },
-    path: { args: ['string'], all: ['string'] },
-    alias: { args: ['string', '?string'] },
+export const types: any = {};
+types.data = ['string','number','boolean'];
+types.logic = ['!and','!or'];
+types.check = ['!eq','!not','!gt','!gte','!lt','!lte'];
+types.operator = ['!add','!plus','!minus','!multiply','!divide'];
+types.unions = ['!union','!unionall'];
+types.fetch = ['!select',...types.unions];
+types.get = ['!data','!variable','!path',...types.logic,...types.check,...types.operator,...types.fetch];
 
-    and: { all: [':get'] },
-    or: { all: [':get'] },
 
-    eq: { args: [':get',':get'] },
-    not: { args: [':get',':get'] },
-    gt: { args: [':get',':get'] },
-    gte: { args: [':get',':get'] },
-    lt: { args: [':get',':get'] },
-    lte: { args: [':get',':get'] },
-
-    add: { all: [':get'] },
-    plus: { all: [':get'] },
-    minus: { all: [':get'] },
-    multiply: { all: [':get'] },
-    divide: { all: [':get'] },
-
-    as: { args: [':get','?string'] },
-    
-    order: { args: ['!path','?boolean'] },
-    orders: { all: ['!order'] },
-    
-    group: { args: ['!path'] },
-    groups: { all: ['!group'] },
-
-    limit: { args: ['number'] },
-    skip: { args: ['number'] },
-
-    returns: { all: ['!as','!path',':get'] },
-    from: { all: ['!alias'] },
-
-    select: {
-      unique: true, all: ['!returns','!from','!and','!orders','!groups','!limit','!skip'],
-      handle: _rules.expressions.select.handle,
-    },
-
-    union: { all: [':fetch'] },
-    unionall: { all: [':fetch'] },
-  },
-};
-
-export const validators = createValidators(rules);
+export const rules: IRules = createRules(types);
+export const validate = createValidate(rules);
 
 export const resolverOptions = {
   _column(name) {

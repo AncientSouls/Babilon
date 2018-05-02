@@ -13,7 +13,7 @@ import {
 import {
   createResolver,
   resolverOptions,
-  validators,
+  validate,
 } from '../lib/proto-sql';
 
 export default () => {
@@ -46,7 +46,7 @@ export default () => {
       ['as', ['path', 'y', 'id'], 'id'],
     ]);
     const resolver = createResolver(resolverOptions);
-    const b = babilon({ resolver, validators, exp });
+    const b = babilon({ resolver, validate, exp });
     assert.deepEqual(b.errors, []);
   });
   it('returnsReferencesAs', () => {
@@ -89,7 +89,7 @@ export default () => {
       ['as', ['path', 'y', 'id'], 'id'],
     ]);
     const resolver = createResolver(resolverOptions);
-    const b = babilon({ resolver, validators, exp });
+    const b = babilon({ resolver, validate, exp });
     assert.deepEqual(b.errors, []);
   });
   it('returnsReferencesString', () => {
@@ -130,7 +130,7 @@ export default () => {
       ['add', ['data', 'y'], ['data', '/'], ['path', 'y', 'id']],
     ]);
     const resolver = createResolver(resolverOptions);
-    const b = babilon({ resolver, validators, exp });
+    const b = babilon({ resolver, validate, exp });
     assert.deepEqual(b.errors, []);
   });
 };

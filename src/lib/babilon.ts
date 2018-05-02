@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
 
-import { validators } from './validators';
-
 export type TExp = any[];
 
 export interface IStep {
@@ -16,12 +14,8 @@ export interface IValidator {
   (last: IStep, flow: IFlow): void;
 }
 
-export interface IValidators {
-  [exp: string]: IValidator;
-}
-
 export interface IResolver {
-  (last, flow): void;
+  (last: IStep, flow: IFlow): void;
 }
 
 export interface IError {
@@ -30,15 +24,20 @@ export interface IError {
   message: string;
 }
 
+export interface IThrow {
+  (emitter: string, message: string);
+}
+
 export interface IFlow {
   exp: TExp;
   variables?: {};
   path?: IStep[];
-  validators?: IValidators;
   validate?: IValidator;
   resolver?: IResolver;
   errors?: IError[];
+  throw?: IThrow;
   result?: any;
+
   resolveMemory?: any;
   validateMemory?: any;
 }
@@ -47,28 +46,13 @@ export interface IBabilon {
   (flow: IFlow): IFlow;
 }
 
-export const router = (flow) => {
-};
-
-export const validate = (last: IStep, flow: IFlow) => {
-  if (!_.isArray(last.exp) || !_.isString(last.exp[0])) {
-    error('validate', 'is not expression', flow);
-  } else {
-    if (!flow.validators[last.exp[0]]) {
-      error('validate', `unexpected exp ${last.exp[0]}`, flow);
-    } else {
-      flow.validators[last.exp[0]](last, flow);
-    }
-  }
-};
-
-export const error = (emitter, message, flow: IFlow) => {
-  const last = _.last(flow.path);
+export const defaultThrow: IThrow = function (emitter, message) {
+  const last: IStep = _.last(this.path);
   const path = [];
-  _.each(flow.path, p => _.isNumber(p.index) ? path.push(p.index) : null);
+  _.each(this.path, p => _.isNumber(p.index) ? path.push(p.index) : null);
   const error = { emitter, message, path };
   last.hasErrors = true;
-  flow.errors.push(error);
+  this.errors.push(error);
 };
 
 export const back = (last, flow) => {
@@ -78,9 +62,9 @@ export const back = (last, flow) => {
 
 export const babilon: IBabilon = (flow) => {
   flow.path = [{ exp: flow.exp, args: [] }];
-  flow.validate = flow.validate || validate;
-  flow.validators = flow.validators || validators;
   flow.errors = [];
+  flow.throw = flow.throw || defaultThrow;
+
   flow.toString = () => {
     if (flow.errors.length) {
       throw new Error(`${flow.errors[0].emitter} ${flow.errors[0].path.map(p => `[${p}]`).join('')}: ${flow.errors[0].message}`);

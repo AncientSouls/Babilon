@@ -1,48 +1,47 @@
 import * as _ from 'lodash';
 
-import { createValidators } from './validators';
-import { rules as _rules } from './rules';
+import { createValidate } from './validators';
+import { createRules, IRules, rules as defaultRules } from './rules';
+import { IValidator } from './babilon';
 
-export const rules = {
-  types: {
-    data: ['undefined','string','number','boolean','object','array'],
-    get: ['!data','!variable'],
-    logic: ['!and','!or'],
-    check: ['!eq','!not','!gt','!gte','!lt','!lte'],
-  },
-  expressions: {
-    data: { args: [':data'] },
-    variable: { args: ['string'] },
-    path: { args: ['string'], all: ['string'] },
-    alias: { args: ['string'] },
+export const types: any = {};
+types.data = ['undefined','string','number','boolean','object','array'];
+types.logic = ['!and','!or'];
+types.check = ['!eq','!not','!gt','!gte','!lt','!lte'];
+types.get = ['!data','!variable'];
 
-    and: { all: [':logic',':check'] },
-    or: { all: [':logic',':check'] },
+export const rules: IRules = {
+  data: { args: [{ variants: types.data }] },
+  variable: { args: [{ variants: ['string'] }] },
+  path: { args: [{ variants: ['string'] }], all: ['string'] },
+  alias: { args: [{ variants: ['string'] }, { variants: ['string'], optional: true }] },
 
-    eq: { args: ['!path',':get'] },
-    not: { args: ['!path',':get'] },
-    gt: { args: ['!path',':get'] },
-    gte: { args: ['!path',':get'] },
-    lt: { args: ['!path',':get'] },
-    lte: { args: ['!path',':get'] },
-    
-    order: { args: ['!path','?boolean'] },
-    orders: { all: ['!order'] },
+  and: { all: [...types.logic,...types.check] },
+  or: { all: [...types.logic,...types.check] },
 
-    limit: { args: ['number'] },
-    skip: { args: ['number'] },
+  eq: { args: [{ variants: ['!path'] },{ variants: types.get }] },
+  not: { args: [{ variants: ['!path'] },{ variants: types.get }] },
+  gt: { args: [{ variants: ['!path'] },{ variants: types.get }] },
+  gte: { args: [{ variants: ['!path'] },{ variants: types.get }] },
+  lt: { args: [{ variants: ['!path'] },{ variants: types.get }] },
+  lte: { args: [{ variants: ['!path'] },{ variants: types.get }] },
+  
+  order: { args: [{ variants: ['!path'] }, { variants: ['boolean'], optional: true }] },
+  orders: { all: ['!order'] },
 
-    returns: { all: ['!path'] },
-    from: { args: ['!alias'] },
+  limit: { args: [{ variants: ['number'] }] },
+  skip: { args: [{ variants: ['number'] }] },
 
-    select: {
-      unique: true, all: ['!returns','!from','!and','!orders','!limit','!skip'],
-      handle: _rules.expressions.select.handle,
-    },
+  returns: { all: ['!path'] },
+  from: { all: ['!alias'] },
+
+  select: {
+    unique: true,
+    all: ['!returns','!from','!and','!orders','!limit','!skip'],
+    handle: defaultRules.select.handle,
   },
 };
-
-export const validators = createValidators(rules);
+export const validate = createValidate(rules);
 
 export const resolverOptions = {
   _logic(last, flow) {

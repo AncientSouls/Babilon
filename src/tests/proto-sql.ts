@@ -7,13 +7,13 @@ import {
 import {
   createResolver,
   resolverOptions,
-  validators,
+  validate,
 } from '../lib/proto-sql';
 
 const resolver = createResolver(resolverOptions);
 
 const babi = (exp, result) => {
-  const b = babilon({ resolver, validators, exp, variables: { a: { b: { c: 123 } } } });
+  const b = babilon({ resolver, validate, exp, variables: { a: { b: { c: 123 } } } });
   assert.deepEqual(b.errors, []);
   assert.deepEqual(b.toString(), result);
   return b;

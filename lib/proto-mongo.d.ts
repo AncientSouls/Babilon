@@ -1,74 +1,8 @@
-export declare const rules: {
-    types: {
-        data: string[];
-        get: string[];
-        logic: string[];
-        check: string[];
-    };
-    expressions: {
-        data: {
-            args: string[];
-        };
-        variable: {
-            args: string[];
-        };
-        path: {
-            args: string[];
-            all: string[];
-        };
-        alias: {
-            args: string[];
-        };
-        and: {
-            all: string[];
-        };
-        or: {
-            all: string[];
-        };
-        eq: {
-            args: string[];
-        };
-        not: {
-            args: string[];
-        };
-        gt: {
-            args: string[];
-        };
-        gte: {
-            args: string[];
-        };
-        lt: {
-            args: string[];
-        };
-        lte: {
-            args: string[];
-        };
-        order: {
-            args: string[];
-        };
-        orders: {
-            all: string[];
-        };
-        limit: {
-            args: string[];
-        };
-        skip: {
-            args: string[];
-        };
-        returns: {
-            all: string[];
-        };
-        from: {
-            args: string[];
-        };
-        select: {
-            unique: boolean;
-            all: string[];
-            handle: (last: any, flow: any) => any;
-        };
-    };
-};
-export declare const validators: {};
+import { IRules } from './rules';
+import { IValidator } from './babilon';
+export declare const types: any;
+export declare const rules: IRules;
+export declare const validate: IValidator;
 export declare const resolverOptions: {
     _logic(last: any, flow: any): {
         [x: string]: any;

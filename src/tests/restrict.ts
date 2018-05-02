@@ -16,7 +16,7 @@ import {
 import {
   createResolver,
   resolverOptions,
-  validators,
+  validate,
 } from '../lib/proto-sql';
 
 export default () => {
@@ -64,7 +64,7 @@ export default () => {
       );
       assert.deepEqual(exp[3][3], ['or',['or',['eq',['path','x','restriction'],['data','abc']],['eq',['path','x','restriction'],['data','def']]],['or',['eq',['path','z','restriction'],['data','abc']],['eq',['path','z','restriction'],['data','def']]]]);
       const resolver = createResolver(resolverOptions);
-      const b = babilon({ resolver, validators, exp });
+      const b = babilon({ resolver, validate, exp });
       assert.deepEqual(b.errors, []);
     });
     it('restrictions alias', () => {
@@ -118,7 +118,7 @@ export default () => {
       assert.deepEqual(exp[3][3], ['or',['eq',['path','_restrictions','subject'],['data','abc']],['eq',['path','_restrictions','subject'],['data','def']]]);
       assert.deepEqual(exp[3][4], ['or',['eq',['path','_restrictions','from'],['path','x','id']],['eq',['path','_restrictions','from'],['path','z','id']]]);
       const resolver = createResolver(resolverOptions);
-      const b = babilon({ resolver, validators, exp });
+      const b = babilon({ resolver, validate, exp });
       assert.deepEqual(b.errors, []);
     });
   });
